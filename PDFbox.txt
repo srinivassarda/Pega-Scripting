@@ -1,0 +1,21 @@
+com.pega.apache.pdfbox.pdmodel.PDDocument doc=null;
+com.pega.apache.pdfbox.util.PDFTextStripper pdfStripper;
+
+java.io.InputStream is = new java.io.ByteArrayInputStream( Base64Util.decodeToByteArray( AttachStream ) );
+try {
+    doc=com.pega.apache.pdfbox.pdmodel.PDDocument.load( is );
+    if (doc.isEncrypted()) {
+        oLog.info("Document is encrypted: trying to decrypt with blank password");
+        try {
+          doc.decrypt("");
+          doc.setAllSecurityToBeRemoved(true);
+        }
+        catch(Exception e) {
+           
+            throw new PRRuntimeException(e);
+        }
+    }
+    pdfStripper=new com.pega.apache.pdfbox.util.PDFTextStripper();
+    ExtractedText=pdfStripper.getText(doc);
+}
+catch(Exception e){ throw new PRRuntimeException(e); }

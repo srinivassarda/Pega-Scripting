@@ -1,0 +1,28 @@
+<script>
+    $(function() {
+        $( "#search" ).autocomplete({
+          source: function( request, response ) {
+            $.ajax({
+              url: "?pyActivity=Data-Portal.pzSearchRunActivity&searchText="+escape(request.term),
+                success: function(response) {
+                 var ac_results = $("#search").closest('.autocomplete_search').find('.ac_results');
+    			 searchResults(ac_results,response);
+                },
+                error: function() {
+            	alert("Failed");
+        	},
+            });
+          },
+          minLength: 3,
+        });
+      });
+      function searchResults(ac_results, html) {
+          ac_results.html(html).removeClass('hidden');
+     }
+</script>
+
+<div class='autocomplete_search'>
+    <label for="search">Rule Search Auto Complete: </label>
+    <input style="width:300px;height:40px;"id="search" class="autocomplete_input" placeholder="Start typing rulename..">
+    <div class='hidden ac_results'></div>
+</div>

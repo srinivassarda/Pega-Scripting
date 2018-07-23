@@ -1,0 +1,68 @@
+   function setMyProperty(propertyName, newValue) {
+        var propertyEntryHandle = pega.u.property.toHandle(propertyName);
+        var elements = pega.util.Dom.getElementsByName(propertyEntryHandle);
+        if (elements) {
+            for (var i = 0; i < elements.length; i++) {
+                if (elements[i].type == "complex") {
+                    if (elements[i].element.setProperty) elements[i].element.setProperty(propertyName, newValue);
+                    else elements[i].value = newValue;
+                } else {
+                    var eleType = elements[i].type;
+                    if (eleType == "checkbox") {
+                        if (newValue = 'true') elements[i].checked = true;
+                        else elements[i].checked = false;
+                    } else elements[i].value = newValue;
+                }
+            }
+        }
+    }
+
+	function getMyProperty(propertyName) {
+
+        var propertyEntryHandle = pega.u.property.toHandle(propertyName);
+        var elements = pega.util.Dom.getElementsByName(propertyEntryHandle);
+
+        if (elements) {
+            for (var i = 0; i < elements.length; i++) {
+
+                if (elements[i].type == "complex") {
+                    if (elements[i].element.getProperty) elements[i].element.getProperty(propertyName);
+                    else return elements[i].value;
+                } else {
+                    var eleType = elements[i].type;
+                    if (eleType == "checkbox") {
+                        if (elements[i].checked) return true;
+                        else return false;
+                    }
+                    return elements[i].value;
+                }
+            }
+        }
+    }
+	function refreshDiv(divID, sectionName, sectionClass) {
+        /*alert("refreshDiv" + divID);
+         alert("test");*/
+        var oSafeURL = new SafeURL(sectionClass + ".getSection");
+
+        if (sectionName) oSafeURL.put("sectionName", sectionName);
+
+        var myCallback = {
+            success: function (o) {
+                /*document.getElementById(divID).innerHTML = o.responseText;*/
+                var objDOMLoaderP = new pega.tools.EvalDOMScripts();
+                objDOMLoaderP.loadHTMLElement(document.getElementById(divID), o.responseText);
+                /*win3 = window.open("", "Window3", "width=320,height=210,scrollbars=yes");
+			win3.document.writeln(o.responseText); */
+            },
+            failure: function (o) {
+                alert(o.statusText);
+                alert(o.status);
+
+                win3 = window.open("", "Window3", "width=320,height=210,scrollbars=yes");
+                win3.document.writeln(o.responseText);
+            }
+        }
+
+        var myConnection = pega.util.Connect.asyncRequest('Post', oSafeURL.toURL(), myCallback, '');
+
+    }

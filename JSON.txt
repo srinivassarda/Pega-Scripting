@@ -1,0 +1,12 @@
+PublicAPI tools = pega_rules_utilities.getPublicAPI();
+ServiceUtils utils = tools.getServiceUtils();
+ParameterPage paramPage = tools.getParameterPage();
+ClipboardProperty mappingConfprop = tools.createPage("Rule-Connect-REST", "").getProperty("pyPOSTRequestDataList");
+ClipboardPage mappingConfPage = mappingConfprop.getPageValue(1);
+mappingConfPage.putString("pyMapFrom", "JSON");
+mappingConfPage.putString("pyMapFromKey", sourcePropertyRefAsStr);
+mappingConfPage.putString("pyDataType", "String");
+mappingConfPage.putString("pyParameterName", "OutboundData");
+java.util.Map dataMap = new java.util.HashMap(3);
+utils.mapOutboundData(mappingConfprop, dataMap, paramPage, mappingConfPage);
+return (String)dataMap.get("OutboundData");
